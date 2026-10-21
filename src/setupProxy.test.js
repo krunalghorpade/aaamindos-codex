@@ -1,12 +1,15 @@
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const setupProxy = require('./setupProxy');
+const startAccessServer = require('../server/dev-access.cjs');
 
 jest.mock('http-proxy-middleware', () => ({
   createProxyMiddleware: jest.fn(() => function proxyMiddleware() {}),
 }));
+jest.mock('../server/dev-access.cjs', () => jest.fn(() => new Promise(() => {})));
 
 beforeEach(() => {
   createProxyMiddleware.mockImplementation(() => function proxyMiddleware() {});
+  startAccessServer.mockImplementation(() => new Promise(() => {}));
 });
 
 function configure() {
