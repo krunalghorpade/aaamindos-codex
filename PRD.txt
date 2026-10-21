@@ -1,0 +1,517 @@
+================================================================================
+PRODUCT REQUIREMENTS DOCUMENT (PRD)
+PROJECT: AAA mindOS (KRATEX mindOS)
+DOCUMENT VERSION: 1.0.0
+DATE: 2026-10-21
+STATUS: ACTIVE / LIVING SPECIFICATION
+================================================================================
+
+--------------------------------------------------------------------------------
+TABLE OF CONTENTS
+--------------------------------------------------------------------------------
+1. EXECUTIVE SUMMARY & MISSION STATEMENT
+2. USER PERSONA & COGNITIVE MODEL
+3. CORE ARCHITECTURE & SYSTEM DESIGN
+4. FUNCTIONAL REQUIREMENTS & MODULE SPECIFICATIONS
+   4.1. Interactive Mind Map Engine
+   4.2. AI Path Synthesis & Expansion Pipelines
+   4.3. States / Saved Nodes Dashboard
+   4.4. Brain Dump & Memory Layer
+   4.5. Goal Proximity Matrix
+   4.6. Daily Inspiration Feed (Persistent Dock)
+   4.7. System Settings & Utilities
+5. VISUAL STYLES & DESIGN LANGUAGE SPECIFICATION
+   5.1. Aesthetic Philosophy (Retro CRT / Cybernetic Terminal)
+   5.2. Theme Palette & Token Specifications
+   5.3. Typography System
+   5.4. Screen Effects (Phosphor CRT & Scanlines)
+   5.5. Micro-Interactions, Component Shapes & Corner Ticks
+   5.6. Custom SVG Cursor System
+   5.7. Graph Styling & Edge Animation Rules
+6. AI PROMPT ENGINEERING SPECIFICATIONS
+7. DATA MODELS & LOCAL STORAGE SCHEMAS
+8. NON-FUNCTIONAL REQUIREMENTS
+9. FUTURE ROADMAP & STRATEGIC HORIZON
+
+================================================================================
+1. EXECUTIVE SUMMARY & MISSION STATEMENT
+================================================================================
+1.1. Overview
+AAA mindOS (also operating as KRATEX mindOS) is a specialized, AI-driven personal
+operating system, strategic synthesizer, and interactive mind-mapping workspace.
+Unlike generic task managers or kanban boards, mindOS operates as an externalized
+human brain, establishing clear, sequential, and causal pathways connecting daily
+activities, speculative thoughts, mistakes, and consumed media directly to a single
+supreme objective.
+
+1.2. The Core Mission
+The system is architected around a single, uncompromising ultimate anchor:
+"WORLD'S NUMBER ONE DJ".
+
+Every module, graph connection, suggestion, and heuristic within mindOS exists to
+either:
+a) Connect current human actions to this apex goal.
+b) Reveal why certain thoughts or distractions fail to connect.
+c) Provide high-leverage steps to advance toward global cultural dominance.
+
+1.3. Artist Context (KRATEX)
+- Artist: Krunal Ghorpade (KRATEX), DJ, producer, creator, and entrepreneur from
+  Mumbai, India.
+- Musical Anchor: Tech House, House, Techno, and creator of "M-House" (combining
+  authentic Marathi cultural rhythms, instruments, and vocal identity with modern
+  club energy).
+- Key Milestones: "Taambdi Chaamdi", "Jevlis Ka", "MVP — Marathi Vaajlach Pahije",
+  "FAKTAHOUSE" project, releases with Spinnin' Records, Saregama, and Play Records.
+- Long-term Vision: Establishing a globally recognizable 5-second sonic fingerprint,
+  scalable cultural IP (festivals, media agency, merchandise, technology), and 
+  international touring presence (Ibiza, ADE, UK, USA, Asia-Pacific).
+
+================================================================================
+2. USER PERSONA & COGNITIVE MODEL
+================================================================================
+2.1. The Hyper-Ideating Creative Entrepreneur
+- Traits: Generates hundreds of concepts across music production, brand strategy,
+  IP creation, live experiences, and technology.
+- Cognitive Pitfall: Creative divergence leading to strategic dispersion; 
+  struggle to differentiate between low-leverage distractions and high-leverage 
+  breakthrough moves.
+- Solution in mindOS: Forces every thought, completed activity, or error through an
+  AI synthesis engine that maps its exact trajectory to the ultimate goal.
+
+2.2. The Cognitive Triad
+mindOS splits all creative inputs into three distinct ontological types:
+1. ACTIVITIES: Concrete real-world occurrences that have already been executed
+   (e.g., played a festival, finished a track master, signed an agreement).
+   Represents EMPIRICAL EVIDENCE.
+2. THOUGHTS: Speculative ideations, hypotheses, and internal mental explorations
+   (e.g., "develop an 8-bar signature drop fill", "pitch an Ibiza residency").
+   Represents STRATEGIC POSSIBILITY.
+3. MISTAKES: Errors in execution, set failures, misallocated budgets, or bad deals.
+   Represents SYSTEMIC INTELLIGENCE. Mistake nodes are converted into lessons,
+   preventative systems, and tactical pivots.
+
+================================================================================
+3. CORE ARCHITECTURE & SYSTEM DESIGN
+================================================================================
+3.1. Tech Stack Overview
+- Core Runtime: React 19 + Vite (Modern, ultrafast HMR build system).
+- Styling Architecture: Vanilla CSS with native CSS Custom Properties (Variables)
+  and zero heavyweight utility frameworks. Clean, hardware-accelerated rendering.
+- Graph Visualization Engine: React Flow (`@xyflow/react` v12).
+- Graph Layout & Algorithmic Engines:
+  - Custom Polar Radial Spiderweb Layout Engine (`getSpiderwebLayout`).
+  - Dagre Layout support for directed planar graphs.
+- AI & LLM Engine: OpenAI API (`gpt-4o`) accessed via local Vite reverse proxy
+  (`/api/openai/chat/completions`) for seamless, CORS-free key forwarding.
+- State Persistence: 100% Client-Side LocalStorage. Zero database dependencies;
+  air-tight privacy; all data resides locally on the user's workstation.
+- Event Communication: Decoupled custom event bus (`CustomEvent('tidyfy')`,
+  `CustomEvent('generate-consumed-path')`).
+
+3.2. Structural Layout Breakdown
+The workstation adopts a 2-column widescreen operational split:
+- Left Column (80% Width): Main Workspace containing dynamic Views (Mind Map,
+  States, Brain Dump, Goal Proximity, Settings) bordered at the bottom by the
+  persistent CRT Taskbar.
+- Right Column (20% Width): Persistent Inspiration Sidebar displaying live intel,
+  cinema, games, literature, and one-click path generation.
+
+================================================================================
+4. FUNCTIONAL REQUIREMENTS & MODULE SPECIFICATIONS
+================================================================================
+
+4.1. Interactive Mind Map Engine (`MindMapView.jsx`)
+- Canvas Behavior: Infinite pan and zoom canvas (minZoom 0.01) utilizing a subtle
+  dotted phosphor background grid.
+- Apex Anchor Node (`GoalNode.jsx`):
+  - Fixed initial coordinate `{ x: 500, y: 0 }`.
+  - Octagonal clipped polygon (`clip-path`).
+  - Large monospace VT323 typography reading "WORLDS NUMBER 1 DJ".
+  - Source handles on all 4 cardinal directions (top, right, bottom, left).
+- Custom Dynamic Nodes (`MindMapNode.jsx`):
+  - Rectangular terminal aesthetic with 4-corner pixel ticks.
+  - Header label denoting origin `[ACTIVITY]`, `[THOUGHT]`, `[MISTAKE]`, or `[STATE]`.
+  - Interactive hover state exposing:
+    - Add Button ('+'): Promotes node to the permanent "States" dashboard and
+      triggers AI synthesis of 5 actionable real-world execution steps.
+    - Delete Button ('X'): Removes node and all attached edges from canvas.
+  - Added State Indicator: High-contrast badge reading "ADDED" with permanent
+    accent glow. Hovering displays the 5-step "Path to Reality" overlay.
+  - Media Root Modifier: Inverted high-contrast color scheme for nodes spawned
+    from consumed cinema, literature, or gaming intel.
+- Custom Edge Renderer (`CustomEdge.jsx`):
+  - Smooth Bezier curves styled according to active theme glow.
+  - Hover Detection: Thick invisible stroke (40px) enables effortless mouse hover.
+  - Interactive Insertion: Hovering an edge renders a floating '+' button in the
+    exact geometric midpoint of the edge. Clicking summons the "Insert Step" modal.
+- Spiderweb Auto-Layout Engine (`getSpiderwebLayout`):
+  - Performs backward Breadth-First Search (BFS) from the Goal Node to assign
+    structural distance tiers.
+  - Computes leaf nodes (origins) and calculates angular distribution around 360°.
+  - Executes anti-overlap relaxation passes (20 iterations) to guarantee legible
+    spacing across dense multi-node radial layers (320px radial layer spacing).
+  - Normalizes edge handle attachment points (top/right/bottom/left) dynamically
+    based on the exact trigonometric tangent angle between connected nodes.
+- Path Traversal & Highlighting:
+  - Hovering any node initiates bidirectional graph traversal:
+    - Upstream (Ancestors) towards the origin.
+    - Downstream (Descendants) towards the central Goal.
+  - Active path nodes and connecting edges remain fully illuminated, with edges
+    switching to an animated marching-ants dash effect (`.edge-highlighted-path`).
+  - Unrelated canvas elements are softly dimmed to 15-25% opacity.
+
+4.2. AI Path Synthesis & Expansion Pipelines
+The system features four dedicated AI generative pipelines powered by OpenAI GPT-4o:
+
+A. Origin Path Synthesis (Canvas Right-Click Context Menu):
+   - Trigger: User right-clicks on canvas, selects category, inputs description.
+   - Behavior: Synthesizes exactly 5 sequential intermediate situational states
+     written in the past/realized tense ("This has happened") bridging the input
+     to the Goal.
+   - Nodes are positioned along a linear vector toward `{ x: 500, y: 0 }` and assigned
+     descending proximity tiers (Tier 6 to Tier 1).
+
+B. Intermediate Step Insertion (Edge '+' Button):
+   - Trigger: User hovers an edge and clicks the '+' insert button.
+   - Behavior: Sends the "FROM" node label and "TO" node label to the LLM. Generates
+     exactly 1 logical intermediate situation bridging the two states.
+   - Splits the existing edge into two new connected edges without breaking graph flow.
+
+C. Directional Node Extension (Drag-to-Blank Handle):
+   - Trigger: User drags an edge connector out from a node handle and releases it
+     on empty canvas space.
+   - Behavior: Opens the "Extend Path" dialog with selectable direction ("Before"
+     or "After"). Generates an immediate adjacent state.
+
+D. Media Consumption Transformation (Sidebar "CONSUMED" Action):
+   - Trigger: User clicks "CONSUMED" on any recommended Movie, Game, or Book.
+   - Behavior: Synthesizes 1 to 5 intermediate nodes translating the artistic,
+     philosophical, or technical lessons of that media directly into electronic
+     music industry leverage.
+
+4.3. States / Saved Nodes Dashboard (`NodesView.jsx`)
+- Screen Layout: 80% Main Grid / 20% Filter Sidebar.
+- Search & Filter: Instant client-side filtering via search query input and origin
+  category filters (All, Activity, Thought, Mistake).
+- 3-Column Tactical Cards:
+  - Displays Unique Node ID (first 8 hex characters).
+  - Origin badge with color-coded accent.
+  - Node Label in bold terminal font.
+  - "Path to Reality": Displays 5 concrete, no-BS music industry actions generated
+    specifically for that state (e.g., "Cold email 50 label A&R reps", "Book support slot").
+  - One-click deletion with canvas state synchronization.
+
+4.4. Brain Dump & Memory Layer (`BrainDumpView.jsx`)
+- Core Manifesto Module: Integrated expandable reader hosting the entire KRATEX
+  Foundational Manifesto, ensuring the guiding philosophy is always accessible.
+- Activity & Mistake Logger: Fast entry interface to log empirical daily occurrences.
+- Memory Feed: Chronological reverse-sorted history cards with timestamping,
+  full-text expandability, and item deletion.
+- Strategic Rule: Thoughts are treated as transient until placed onto the Mind Map;
+  only Activities and Mistakes persist in the Brain Dump memory layer.
+
+4.5. Goal Proximity Matrix (`GoalProximityView.jsx`)
+- Visual Tier Segmentation: Classifies all active nodes into structural tiers
+  based on distance from the central Goal:
+  - Tier 1: Immediate predecessors to the Goal (highest strategic proximity).
+  - Tier 2 to Tier 5: Progressive intermediate stepping stones.
+  - Tier 6: Raw origin states (Activities, Mistakes, initial thoughts).
+- Status Tracking: Visually indicates which nodes have been saved to the permanent
+  States roster versus uncommitted speculative paths.
+
+4.6. Daily Inspiration Feed (`InspirationSidebar.jsx`)
+- Persistent 20% Right-side Panel: Operates independently of the active workspace view.
+- Automated Daily Intelligence: Evaluates current Brain Dump logs and active canvas
+  nodes to synthesize custom daily directives:
+  1. INTEL / NEWS: 5 real, highly-searchable Google queries (2-5 words) focusing on
+     emerging electronic music trends, A&R movements, and audio tech.
+  2. CINEMA OF THE DAY: Inspiring film/documentary + rationale + direct IMDb query link.
+  3. SIMULATION OF THE DAY: Masterpiece video game + design rationale + Metacritic query link.
+  4. LITERATURE OF THE DAY: Book recommendation + rationale + direct Goodreads link +
+     punchy quote.
+- Consumption Action: "CONSUMED" button triggers automatic path synthesis into the
+  Mind Map canvas, closing the loop between media intake and creative execution.
+- Persistence: Daily caching in `localStorage` (`kratex_inspiration_data`) prevents
+  redundant API calls on refresh.
+
+4.7. System Settings & Utilities
+- Settings Tab (`SettingsView.jsx`): Input and local storage for OpenAI API Key.
+  Masked password field with 2-second confirmation feedback.
+- Taskbar Tools Menu:
+  - "TIDYFY": Fires global event to execute the Spiderweb auto-layout algorithm
+    and centers the viewport (`fitView`).
+  - Theme Switcher: Instant cycling between 4 retro CRT color palettes.
+  - Danger Action ("CLEAR MAP"): Complete canvas reset retaining only the central
+    Goal Node, protected by native browser confirmation prompt.
+- Status Telemetry: Dynamic "Saved: [TIMESTAMP]" indicator updating on every
+  state change.
+
+================================================================================
+5. VISUAL STYLES & DESIGN LANGUAGE SPECIFICATION
+================================================================================
+
+5.1. Aesthetic Philosophy: Retro-Futuristic CRT Workstation
+The design language of mindOS merges 1980s retro-computing terminal aesthetics
+with modern high-performance cybernetic workstations:
+- Utilitarian Rigidity: Sharp 0px border-radii across all primary components,
+  panels, buttons, and inputs. Curved modern pill buttons are strictly prohibited.
+- CRT Monitor Immersion: Phosphor glow, scanline overlays, high-contrast black
+  backgrounds, and monochromatic luminous themes.
+- Information Density: High-contrast monospace labels, bracketed metadata `[STATE]`,
+  and minimalist micro-typography.
+
+5.2. Theme Palette & Token Specifications
+The application implements 4 distinct theme presets configured as CSS classes on `body`.
+All UI components reference these native CSS variables.
+
+A. Theme: Amber CRT (`body.theme-orange`) [DEFAULT]
+   --crt-bg: #0a0a0a           (Deep charcoal monitor black)
+   --crt-bg-panel: #111111     (Secondary elevated panel black)
+   --text-color: #ffb000       (Classic warm monochrome amber terminal)
+   --text-muted: #b37b00       (Dimmed amber subtext)
+   --accent-color: #ffb000     (Primary luminescent amber)
+   --crt-border: 1px solid #ffb000
+   --crt-shadow: inset 0 0 10px rgba(255, 176, 0, 0.1), 0 0 10px rgba(255, 176, 0, 0.2)
+   --crt-glow: 0 0 5px rgba(255, 176, 0, 0.7)
+   --node-activity: #ffb000
+   --node-thought: #ffb000
+   --node-mistake: #ffb000
+   --line-color: #ffb000
+
+B. Theme: Matrix Green (`body.theme-green`)
+   --crt-bg: #0a0a0a
+   --crt-bg-panel: #111111
+   --text-color: #00ff00       (Pure P1 phosphor green)
+   --text-muted: #008800       (Dimmed terminal phosphor)
+   --accent-color: #00ff00
+   --crt-border: 1px solid #00ff00
+   --crt-shadow: inset 0 0 10px rgba(0, 255, 0, 0.1), 0 0 10px rgba(0, 255, 0, 0.2)
+   --crt-glow: 0 0 5px rgba(0, 255, 0, 0.7)
+   --node-activity: #00ff00
+   --node-thought: #00ff00
+   --node-mistake: #00ff00
+   --line-color: #00ff00
+
+C. Theme: Sci-Fi Cyber Blue (`body.theme-blue`)
+   --crt-bg: #0a0a0a
+   --crt-bg-panel: #111111
+   --text-color: #00d8ff       (Electric cyan terminal glow)
+   --text-muted: #007799
+   --accent-color: #00d8ff
+   --crt-border: 1px solid #00d8ff
+   --crt-shadow: inset 0 0 10px rgba(0, 216, 255, 0.1), 0 0 10px rgba(0, 216, 255, 0.2)
+   --crt-glow: 0 0 5px rgba(0, 216, 255, 0.7)
+   --node-activity: #00d8ff
+   --node-thought: #00d8ff
+   --node-mistake: #00d8ff
+   --line-color: #00d8ff
+
+D. Theme: Ghost Monochrome White (`body.theme-white`)
+   --crt-bg: #0a0a0a
+   --crt-bg-panel: #111111
+   --text-color: #ffffff       (Ultra-crisp laboratory monochrome)
+   --text-muted: #aaaaaa
+   --accent-color: #ffffff
+   --crt-border: 1px solid #ffffff
+   --crt-shadow: inset 0 0 10px rgba(255, 255, 255, 0.1), 0 0 10px rgba(255, 255, 255, 0.2)
+   --crt-glow: 0 0 5px rgba(255, 255, 255, 0.7)
+   --node-activity: #ffffff
+   --node-thought: #ffffff
+   --node-mistake: #ffffff
+   --line-color: #ffffff
+
+5.3. Typography System
+- Display / Terminal Header Font: "VT323", monospace (Google Fonts).
+  - Used for: Goal Node title, primary tactical headers, status readouts.
+  - Attributes: 48px size for Goal Node, bold, all-caps, character glow.
+- Interface & Body Font: 'Helvetica Neue', Helvetica, Arial, sans-serif.
+  - Used for: Node text, sidebar feed, form controls, dialogues.
+  - Letter Spacing: Tightened tracking (`-0.03em`) for high-tech editorial precision.
+  - Case: Strict uppercase transforms on labels, buttons, categories, and system tags.
+- Microcopy: 10px - 12px uppercase text with widened letter-spacing (`1px - 2px`)
+  for telemetry data, timestamps, and origin indicators.
+
+5.4. Screen Effects (Phosphor CRT & Scanlines)
+To evoke physical glass cathode-ray tube monitors without compromising rendering
+speed, a dual-layer CSS gradient shader is applied across `body` and `body::after`:
+- Base Layer (`body`):
+  ```css
+  background-image: 
+    linear-gradient(rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+    linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+  background-size: 100% 4px, 6px 100%;
+  ```
+- Overlay Raster Shader (`body::after`):
+  Fixed full-screen pseudo-element (`pointer-events: none; z-index: 2;`) with:
+  ```css
+  background: 
+    linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+    linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+  background-size: 100% 2px, 3px 100%;
+  ```
+- Phosphor Glow: Native CSS `text-shadow: var(--crt-glow);` applied to all text.
+
+5.5. Micro-Interactions, Component Shapes & Corner Ticks
+- Corner Ticks: Mind Map nodes feature four 4x4px accent-colored squares pinned
+  to the exact outer corners (`top: -2px, left: -2px`, etc.), providing an iconic
+  tactical targeting crosshair aesthetic.
+- Buttons & Controls:
+  - Transparent backgrounds with 1px solid `var(--text-color)`.
+  - Hover: Inversion effect (background becomes `var(--text-color)`, text becomes `var(--crt-bg)`).
+  - Active: Sustained inverted state.
+- Handle Geometry: 8x8px square connector handles with zero radius (`border-radius: 0`).
+- Floating Menus: Panels float with `var(--crt-shadow)` drop shadows, 1px solid
+  borders, and dark panel fills (`#111111`). Context menus support drag-to-reposition.
+
+5.6. Custom SVG Cursor System
+Native operating system arrows are completely replaced by dynamic SVG data-URI cursors:
+- Default Canvas / UI Cursor: Crosshair reticle with 12px center anchor.
+  `cursor: var(--cursor-svg) 12 12, crosshair;`
+- Interactive Element Cursor (Buttons, Handles, Links): Solid 12x12px square pixel block.
+  `cursor: var(--cursor-ptr-svg) 12 12, pointer !important;`
+- Colors adapt dynamically to the active CRT theme color.
+
+5.7. Graph Styling & Edge Animation Rules
+- Inactive Edges: 1px solid `var(--line-color)` with subtle opacity.
+- Hover / Active Edges: 2px solid `var(--text-color)` with dynamic animated dash:
+  ```css
+  @keyframes dash {
+    from { stroke-dashoffset: 20; }
+    to { stroke-dashoffset: 0; }
+  }
+  .edge-highlighted-path {
+    stroke-dasharray: 6 6;
+    animation: dash 0.5s linear infinite reverse;
+  }
+  ```
+
+================================================================================
+6. AI PROMPT ENGINEERING SPECIFICATIONS
+================================================================================
+
+All generative calls enforce strict behavioral rules to prevent bland corporate AI
+platitudes and ensure razor-sharp music industry specificity:
+- Persona: "You are KRATEX MindOS, the external brain of Krunal Ghorpade (KRATEX)."
+- Ultimate Goal Reference: "WORLD'S NUMBER ONE DJ."
+- Tone Rule: "CRITICAL: Do NOT output actionable tasks (e.g., 'Do this', 'Stay focused').
+  Instead, output simulated future situations written in the tone of 'this has happened'
+  (e.g., 'A viral moment on TikTok has expanded my audience', 'I have headlined Tomorrowland').
+  Must be extremely direct, straightforward, no-BS, and highly specific to the music industry."
+- Output Schema: Strict JSON output (`response_format: { type: 'json_object' }`).
+
+================================================================================
+7. DATA MODELS & LOCAL STORAGE SCHEMAS
+================================================================================
+
+7.1. Node Data Object (`flowNodes`)
+```json
+{
+  "id": "uuid-string-or-goal-node",
+  "type": "mindMapNode | goalNode",
+  "position": { "x": 500, "y": 0 },
+  "data": {
+    "label": "String: node description or title",
+    "type": "Activity | Thought | Mistake | State",
+    "originType": "Activity | Thought | Mistake",
+    "isAdded": false,
+    "actionsLoading": false,
+    "actions": ["Step 1", "Step 2", "Step 3", "Step 4", "Step 5"],
+    "isMediaRoot": false,
+    "tier": 1
+  }
+}
+```
+
+7.2. Edge Data Object (`flowEdges`)
+```json
+{
+  "id": "e-sourceId-targetId",
+  "source": "source-node-uuid",
+  "target": "target-node-uuid",
+  "sourceHandle": "top | right | bottom | left",
+  "targetHandle": "top | right | bottom | left",
+  "type": "custom",
+  "style": { "stroke": "var(--line-color)", "strokeWidth": 1 }
+}
+```
+
+7.3. Brain Dump Entry Object (`entries`)
+```json
+{
+  "id": "uuid-string",
+  "type": "Manifesto | Activity | Mistake",
+  "content": "Full text log or manifesto markdown",
+  "timestamp": "2026-10-21T16:30:00.000Z"
+}
+```
+
+7.4. Inspiration State Object (`kratex_inspiration_data`)
+```json
+{
+  "lastFetchDate": "Wed Oct 21 2026",
+  "content": {
+    "news": ["Topic 1", "Topic 2", "Topic 3", "Topic 4", "Topic 5"],
+    "movie": "Movie Title",
+    "movie_desc": "One sentence rationale",
+    "game": "Game Title",
+    "game_desc": "One sentence rationale",
+    "book": "Book Title",
+    "book_desc": "One sentence rationale",
+    "quote": "Punchy direct quote"
+  }
+}
+```
+
+7.5. Key Storage Registry
+- `kratex_flownodes`: Serialized array of active canvas nodes.
+- `kratex_flowedges`: Serialized array of active canvas edges.
+- `kratex_savednodes`: Serialized array of saved states with 5-step action plans.
+- `kratex_entries`: Serialized array of Brain Dump entries and Manifesto.
+- `kratex_theme`: Active theme string (`theme-orange`, `theme-green`, `theme-blue`, `theme-white`).
+- `kratex_openai_api_key`: OpenAI API key for AI synthesis.
+- `kratex_inspiration_data`: Daily cached media and news intel.
+
+================================================================================
+8. NON-FUNCTIONAL REQUIREMENTS
+================================================================================
+8.1. Performance & Responsiveness
+- Canvas Rendering: Smooth 60fps pan/zoom performance across graphs containing up
+  to 150 simultaneous nodes and edges.
+- Graph Re-layout: `getSpiderwebLayout` calculation execution under 50ms for 100 nodes.
+- Bundle Efficiency: Zero heavy external component libraries; lean bundle loading
+  in under 1.5 seconds on local development server.
+
+8.2. Data Security & Privacy
+- Client-Side Isolation: User API keys and personal notes are never routed through
+  third-party telemetry servers.
+- Direct Forwarding: OpenAI requests travel only between the local Vite dev proxy
+  and `api.openai.com`.
+
+8.3. Resilience & Graceful Degradation
+- Network / API Failure: If OpenAI quota or network errors occur, the UI retains
+  canvas integrity and renders clear terminal error alerts without crashing state.
+- Local Storage Protection: All state mutations execute safe JSON serialization
+  wrapped in try/catch blocks with console diagnostics.
+
+================================================================================
+9. FUTURE ROADMAP & STRATEGIC HORIZON
+================================================================================
+9.1. Cognitive Pattern Recognition Engine (Phase 2)
+As documented in the KRATEX Manifesto (Section 53-57), the system will introduce
+an automated meta-analysis engine that evaluates completed versus stalled nodes:
+- Identifies execution bottlenecks (e.g., "High frequency of sonic identity thoughts,
+  low frequency of studio production activities").
+- Identifies repeated tactical errors in touring, releases, or social distribution.
+- Alerts user to dead-end nodes that have remained inactive for over 30 days.
+
+9.2. Audio-Reactive Mind Map & Sonic Fingerprint Analyzer (Phase 3)
+- Direct integration of Web Audio API to analyze KRATEX unreleased audio files.
+- Visual nodes pulsing in synchrony with BPM and frequency spectrum during review.
+
+9.3. Portable Sync & Encrypted Cloud Backup (Phase 4)
+- Optional encrypted export/import file format (`.mindos`) enabling cross-machine
+  transfer while preserving 100% data privacy.
+
+================================================================================
+END OF PRD - AAA mindOS (KRATEX mindOS)
+================================================================================

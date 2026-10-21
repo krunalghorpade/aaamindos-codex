@@ -1,0 +1,3 @@
+import { useRef, useEffect } from 'react';
+import { X } from 'lucide-react';
+export default function Modal({title,eyebrow='MIND OS / INPUT',onClose,children,busy=false}){const ref=useRef();useEffect(()=>{ref.current.showModal();ref.current.querySelector('textarea,input')?.focus();},[]);return <dialog ref={ref} className="modal" onCancel={e=>{e.preventDefault();if(!busy)onClose();}} onClick={e=>{if(e.target===ref.current&&!busy)onClose();}}><div className="modal-head"><div><div className="micro">{eyebrow}</div><h2>{title}</h2></div><button disabled={busy} className="icon-button" aria-label="Close dialog" onClick={onClose}><X size={20}/></button></div>{children}</dialog>;}
