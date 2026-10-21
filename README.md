@@ -6,7 +6,7 @@ A local creative operating system for KRATEX, implemented from `PRD.txt` with Re
 
 ```sh
 npm install
-npm run dev
+npm run dev 
 ```
 
 Open http://127.0.0.1:5173. The server binds to loopback only. Add an OpenAI API key in **Settings** to enable GPT-4o synthesis. Manual map editing and all memory features work without a key.

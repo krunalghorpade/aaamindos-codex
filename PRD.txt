@@ -7,7 +7,7 @@ STATUS: ACTIVE / LIVING SPECIFICATION
 ================================================================================
 
 --------------------------------------------------------------------------------
-TABLE OF CONTENTS
+TABLE OF CONTENTS.       
 --------------------------------------------------------------------------------
 1. EXECUTIVE SUMMARY & MISSION STATEMENT
 2. USER PERSONA & COGNITIVE MODEL
