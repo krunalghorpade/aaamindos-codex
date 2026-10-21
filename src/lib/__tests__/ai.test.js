@@ -1,6 +1,5 @@
-import test from 'node:test';
-import assert from 'node:assert/strict';
-import { askAI, validateStrings, synthesize, generateInspiration } from '../src/lib/ai.js';
+import assert from 'assert/strict';
+import { askAI, validateStrings, synthesize, generateInspiration } from '../ai.js';
 const success=content=>({ok:true,status:200,json:async()=>({choices:[{finish_reason:'stop',message:{content:JSON.stringify(content)}}]})});
 test('missing API key makes no network request',async()=>{let called=false;await assert.rejects(()=>askAI('','test',{fetchImpl:()=>{called=true;}}),/Add your OpenAI/);assert.equal(called,false);});
 test('requests use the local proxy, specified model, and JSON mode',async()=>{const payload=await askAI('test-key','JSON please',{fetchImpl:async(url,options)=>{assert.equal(url,'/api/openai/chat/completions');assert.equal(options.headers.Authorization,'Bearer test-key');const body=JSON.parse(options.body);assert.equal(body.model,'gpt-4o');assert.equal(body.response_format.type,'json_object');assert.match(body.messages[0].content,/KRATEX/);return success({steps:['one']});}});assert.deepEqual(payload.steps,['one']);});

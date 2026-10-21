@@ -1,7 +1,6 @@
-import test from 'node:test';
-import assert from 'node:assert/strict';
-import { performance } from 'node:perf_hooks';
-import { GOAL, tiersFor, pathFor, getSpiderwebLayout, getDagreLayout, insertBetween, removeNode, attachHandles } from '../src/lib/graph.js';
+import assert from 'assert/strict';
+import { performance } from 'perf_hooks';
+import { GOAL, tiersFor, pathFor, getSpiderwebLayout, getDagreLayout, insertBetween, removeNode, attachHandles } from '../graph.js';
 const node=(id,x=0,y=0)=>({id,position:{x,y},data:{label:id}});
 const graph=()=>({nodes:[node(GOAL,500,0),node('a'),node('b'),node('sibling'),node('island')],edges:[{id:'a-b',source:'a',target:'b'},{id:'b-g',source:'b',target:GOAL},{id:'s-g',source:'sibling',target:GOAL}]});
 test('BFS finds shortest structural distance and marks disconnected nodes',()=>{const g=graph(),tiers=tiersFor(g.nodes,g.edges);assert.equal(tiers.get('a'),2);assert.equal(tiers.get('b'),1);assert.equal(tiers.get('island'),null);assert.equal(tiers.get(GOAL),0);});

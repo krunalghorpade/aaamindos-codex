@@ -1,4 +1,4 @@
-import dagre from '@dagrejs/dagre';
+import dagre from 'dagre';
 export const GOAL = 'goal-node';
 export function tiersFor(nodes, edges) {
   const tiers = new Map([[GOAL, 0]]), incoming = new Map();

@@ -1,23 +1,42 @@
 # AAA Mind OS
 
-A local creative operating system for KRATEX, implemented from `PRD.txt` with React 19, Vite, React Flow 12, Dagre, and vanilla CSS.
+A local creative operating system for KRATEX, implemented from `PRD.txt` with React 19, Create React App (`react-scripts` 5.0.1 / Webpack 5), React Flow 12, Dagre, and vanilla CSS.
 
 ## Run
- 
+
+Use Node.js **16.20.2** and npm **8.19.4** on the restricted host. `.nvmrc` pins the validation runtime. Dagre is pinned to `0.8.5`, whose graph library supports Node 16; the newer scoped graphlib dependency requires a newer Node runtime.
+
+The package overrides keep Browserslist's Node release data and Tailwind's PostCSS configuration loader on Node 16-compatible versions, and CRA's optional TypeScript dependency within its supported range. Use the committed lockfile with `npm ci` to preserve the validated dependency tree.
+
 ```sh
-npm install
-npm run dev 
+npm ci
+npm start
 ```
 
-Open http://127.0.0.1:5173. The server binds to loopback only. Add an OpenAI API key in **Settings** to enable GPT-4o synthesis. Manual map editing and all memory features work without a key.
+Open http://127.0.0.1:5173. `.env.development` retains the existing local origin so your saved graph, memories, and API key remain available. The development server binds to loopback only; it is not the production server.
 
 ```sh
 npm test
 npm run build
-npm run preview
 ```
 
-Preview runs at http://127.0.0.1:4173 with the same local OpenAI reverse proxy. A plain static host does not include that proxy; run through Vite for AI features.
+CRA uses `public/index.html` and `src/index.js`, injects the compiled scripts, and writes the deployable application to **`build/`**. `homepage: "."` makes generated asset URLs relative so the frontend can also be hosted in a subdirectory.
+
+## Deploy to cPanel
+
+1. Run `npm ci` and `npm run build` using the versions above.
+2. Upload the **contents of `build/`**, including `static/`, to the domain's document root or chosen subdirectory in `public_html`.
+3. Serve those files with Apache; the built frontend does not need a running Node process.
+
+`.env.production` sets `GENERATE_SOURCEMAP=false` to reduce production build memory consumption. If your account's RAM limit is still too low for Webpack, build on your workstation and upload `build/`; no build has to run on the shared server. Do not upload source files, `.env` files, or `node_modules` into the public document root.
+
+### OpenAI proxy
+
+`src/setupProxy.js` preserves the same `/api/openai/chat/completions` → OpenAI forwarding in **development**. It forwards the browser-supplied Authorization header and strips cookies, origin, and referrer headers.
+
+CRA's static output does **not** include a server proxy. For AI features on cPanel, the domain must provide `/api/openai/chat/completions` through an appropriate backend or reverse proxy. That endpoint is relative to the **domain root**, even if the frontend is in a subdirectory. Manual mapping and memory features work without it. Never put your API key in a `REACT_APP_*` variable or source file; those values can be embedded in the public bundle.
+
+Configuration references: [CRA proxy setup](https://create-react-app.dev/docs/proxying-api-requests-in-development/) and [CRA memory-related build settings](https://create-react-app.dev/docs/advanced-configuration/).
 
 ## Features
 
@@ -36,7 +55,7 @@ The supplied PRD did not contain the full KRATEX manifesto. Brain Dump provides 
 
 All graph records, plans, memories, settings, and the API key are stored in this browser's localStorage under the PRD's `kratex_*` keys. `kratex_workspace` is an additional single-write graph snapshot that avoids partial graph recovery. Failed writes display a storage warning. Browser storage is unencrypted and specific to its origin; export important work before clearing it or changing browser/port. The JSON export does not contain the API key.
 
-Only explicitly requested AI calls and daily inspiration refreshes send context to OpenAI through `/api/openai/chat/completions`. There is no telemetry, remote database, or cloud hosting. External search links open only when clicked. Keys are forwarded in an Authorization header, never a URL.
+Only explicitly requested AI calls and daily inspiration refreshes send context to OpenAI through `/api/openai/chat/completions`. The app adds no telemetry or remote database. External search links open only when clicked. Keys are forwarded in an Authorization header, never a URL.
 
 ## AI implementation reference
 
